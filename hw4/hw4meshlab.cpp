@@ -36,11 +36,10 @@ int main(int argc, char** argv)
     glutMainLoop();
     return 0;
 }
-GLuint showFlatList, showWireList;
 int showstate = 1;
-bool showFace = true;
-bool showWire = false;
-bool showFlatlines = false;//display different mode
+bool face_flag = true;
+bool line_flag = false;
+bool flatline_flag = false;//display different mode
 void CreateNewFunctionListWire(GLuint &list)
 {
     glNewList(list, GL_COMPILE);
@@ -131,16 +130,16 @@ void display()
     glRotatef(y_rotate, 0.0f, 1.0f, 0.0f);
     glTranslatef(x_position, y_position,0.0f);
     glScalef(scale, scale, scale); 
-    if (showFace)
+    if (face_flag)
     {
         drawFace();
     }
-    else if (showFlatlines) 
+    else if (flatline_flag) 
     {
         drawLine();
         drawFace();
     }
-    else if (showWire)
+    else if (line_flag)
     {
         drawLine();
     }
@@ -172,22 +171,22 @@ void keyboard(int key, int x, int y) {
         init();
         break;
     case GLUT_KEY_F2:
-        if (showFace == true) 
+        if (face_flag == true) 
         {
-            showFace = false;
-            showWire = true;
+            face_flag = false;
+            line_flag = true;
             cout<<"wire"<<endl;
         }
-        else if (showWire == true)
+        else if (line_flag == true)
         {
-            showWire = false;
-            showFlatlines = true;
+            line_flag = false;
+            flatline_flag = true;
             cout << "Flatlines" << endl;
         }
-        else if (showFlatlines == true) 
+        else if (flatline_flag == true) 
         {
-            showFlatlines = false;
-            showFace = true;
+            flatline_flag = false;
+            face_flag = true;
             cout << "Flat" << endl;
         }
         break;
