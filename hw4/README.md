@@ -1,0 +1,1 @@
+g++ -o hw4meshlab hw4meshlab.cpp -lGL -lGLU -lglut -lOpenMeshCore
