@@ -1,6 +1,32 @@
-g++ -o hw4meshlab hw4meshlab.cpp -lGL -lGLU -lglut -lOpenMeshCore
-# cg course asssignment 4
 
+# cg course asssignment 4
+## how to run
+first because there is some dynaimc linking libary out there you need to place them in the right place,
+you should type
+```
+./install.sh
+```
+only works in linux
+there you can just run the two program
+
+### using besier
+click on the screen when you make it four it will form a besier curve
+### using meshlab
+key | usage
+---|---
+F1 | changing file to draw the next model
+F2 | changing different form the present the model
+mouse click| to rotate the model
+mouse rolling| to get far or close
+up | move the model up
+down | move down
+left | move left
+right |right 
+
+### compile command
+```
+g++ -o hw4meshlab hw4meshlab.cpp -lGL -lGLU -lglut -lOpenMeshCore
+```
 ## besier curve
 the result was below
 ![besizer curve](./besizer.png)
