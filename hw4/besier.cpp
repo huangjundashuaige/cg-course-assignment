@@ -102,7 +102,26 @@ void display()
         drawBezier(line);
     }
 }
-the
+void mouse(int button, int state, int x, int y) 
+{
+    //cout<<1<<endl;
+    if(state == GLUT_DOWN)
+    {
+        Point p(x,480-y);
+        glColor3f(1.0,1.0,1.0);
+        glBegin(GL_POINTS);
+        glVertex2f(p.x, p.y);
+        glEnd();
+        glFlush();
+        vec_point.push_back(p);
+        if(vec_point.size()==4)
+        {
+            vec_ber.push_back(vec_point);
+            vec_point.clear();
+        }  
+    }
+    glutPostRedisplay();
+}
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv); 
