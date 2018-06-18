@@ -1,53 +1,34 @@
-#define GLUT_DISABLE_ATEXIT_HACK  
-#include <math.h>  
-  
+#define GLUT_STATIC
 #include <GL/glut.h>
-//#pragma comment(lib, "glut32.lib")  
   
-#define RADIUS 50.0f  
+#define teapot_size 50.0f  
 #define SIZE 100.0f  
-  
-GLboolean bWire = false;  
-void OnDisplay(void)  
+   
+void display(void)  
 {  
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-    glEnable(GL_DEPTH_TEST); //使能深度检测  
-
+    glEnable(GL_DEPTH_TEST);
     glPushMatrix();  
+
     glColor3f(1.0f, 1.0f, 1.0f);  
-    glEnable(GL_NORMALIZE);  //归一化法向量  
-    glutSolidTeapot(RADIUS); 
+    glEnable(GL_NORMALIZE); //according to the doc this will make less mistake in some cases
+    glutSolidTeapot(teapot_size); 
+    
     glPopMatrix();  
+
     glutSwapBuffers();  
+
 }  
   
-void OnReshape(int w, int h)  
-{  
-    glViewport(0, 0, w, h);  
-    glMatrixMode(GL_PROJECTION);  
-  
-    float aspect = (float)h / (float)w;  
-  
-    if(w <= h)  
-    {  
-        glOrtho(-SIZE, SIZE, -SIZE * aspect, SIZE * aspect, -SIZE, SIZE);  
-    }  
-    else  
-    {  
-        glOrtho(-SIZE / aspect, SIZE / aspect, -SIZE, SIZE, -SIZE, SIZE);  
-    }  
-    gluLookAt(0.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);  
-    //gluLookAt(0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-}  
 GLfloat diffuseMaterial[4] = { 1,1,1, 1.0 };
 void SetupLights()  
 {  
 
     glShadeModel (GL_SMOOTH);
-    GLfloat ambientLight[]  = {0.2f,  0.2f,  0.2f,  1.0f};//环境光  
-    GLfloat diffuseLight[]  = {0.9f,  0.9f,  0.9f,  1.0f};//漫反射  
-    GLfloat specularLight[] = {1.0f,  1.0f,  1.0f,  1.0f};//镜面光  
-    GLfloat lightPos[]      = {1.0f, -2.0f, 2.0f, 1.0f};//光源位置
+    GLfloat ambientLight[]  = {0.2f,  0.2f,  0.2f,  1.0f};//enviormental light 
+    GLfloat diffuseLight[]  = {0.9f,  0.9f,  0.9f,  1.0f};//slow reflection 
+    GLfloat specularLight[] = {1.0f,  1.0f,  1.0f,  1.0f};//mirror reflection light 
+    GLfloat lightPos[]      = {1.0f, -2.0f, 2.0f, 1.0f};//light source position，spot light
     //GLfloat lightPos2[]      = {1.0f, -2.0f, 2.0f, 0.0f};  
     //GLfloat spot_direction[] = {100.0f, -50.0f, 50.0f};
     GLfloat shinless[] = {50.0};
@@ -55,30 +36,29 @@ void SetupLights()
     glLightfv(GL_LIGHT1, GL_POSITION, lightPos);
     //glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction);
     //glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, deg);
-    //glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);     //设置环境光源  
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);     //设置漫反射光源  
-    glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);   //设置镜面光源  
+    //glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);     //set up the ebviormental light  
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);     //set up the slow reflection light  
+    glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);   //set up the mirror reflection light    
     glEnable(GL_LIGHT1);
 
 
-    GLfloat ambientLight2[]  = {0.0f,  0.0f,  0.0f,  1.0f};//环境光  
-    GLfloat diffuseLight2[]  = {0.5f,  0.5f,  0.5f,  1.0f};//漫反射  
-    GLfloat specularLight2[] = {0.5f,  0.5f,  0.5f,  1.0f};//镜面光  
-    GLfloat lightPos2[]      = {1.0f, -2.0f, 2.0f, 0.0f};//光源位置
-                              //启用光照  
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos2);        //设置灯光位置  
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight2);     //设置环境光源  
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight2);     //设置漫反射光源  
-    //glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight2);   //设置镜面光源  
+    GLfloat ambientLight2[]  = {0.0f,  0.0f,  0.0f,  1.0f};//enviormental light 
+    GLfloat diffuseLight2[]  = {0.5f,  0.5f,  0.5f,  1.0f};//slow reflection 
+    GLfloat specularLight2[] = {0.5f,  0.5f,  0.5f,  1.0f};//mirror reflection light 
+    GLfloat lightPos2[]      = {1.0f, -2.0f, 2.0f, 0.0f};//light source position，point light source
+ 
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos2);        //set the light source position  
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight2);     //set up the ebviormental light  
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight2);     //set up the slow reflection light  
+    //glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight2);   //set up the mirror reflection light    
 
     glEnable(GL_LIGHT0);
-   
-                         //打开第一个灯光  
-    glEnable(GL_COLOR_MATERIAL);                        //启用材质的颜色跟踪  
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);  //指定材料着色的面  
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularLight); //指定材料对镜面光的反应  
+    
+    glEnable(GL_COLOR_MATERIAL);                        //start the setting of material  
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);  //set up which face 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularLight); //reaction to the material  
     //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shinless);
-    glMateriali(GL_FRONT, GL_SHININESS, 100);           //指定反射系数     
+    glMateriali(GL_FRONT, GL_SHININESS, 100);           //reflection rate   
     
 /*
     GLfloat light_position[] = {50.0f, 0.0f, 50.0f, 1.0f };  
@@ -89,18 +69,24 @@ void SetupLights()
     glEnable(GL_DEPTH_TEST);    
 */
 }  
+void init()
+{
+    glMatrixMode(GL_PROJECTION);
+    glViewport(0, 0, 480, 480); 
+    glOrtho(-SIZE, SIZE, -SIZE , SIZE , -SIZE, SIZE);  
+    gluLookAt(0.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f); 
+}
 int main(int argc, char* argv[])  
 {  
-    glutInit(&argc, argv);                                      //初始化OpenGL  
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);   //设置显示模式  
-    glutInitWindowSize(600, 480);  
-    glutCreateWindow("GLUT提供的9种实体对象");  
-    glutReshapeFunc(OnReshape);  
-    glutDisplayFunc(OnDisplay);  
+    glutInit(&argc, argv); 
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
+    glutInitWindowSize(480, 480);  
+    glutCreateWindow("simple light source");   
+    init();
+    glutDisplayFunc(display);  
+   
+    SetupLights();                  //set the light up 
   
-    //CreateMenu();                   //实际生成菜单  
-    SetupLights();                  //设置光照  
-  
-    glutMainLoop();                 //进入OpenGL主循环  
+    glutMainLoop();                 //main loop of the opengl  
     return 0;
 }  

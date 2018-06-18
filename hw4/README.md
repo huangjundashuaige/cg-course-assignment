@@ -1,5 +1,5 @@
 
-# cg course asssignment 4
+# cg course asssignment 5
 ## how to run
 first because there is some dynaimc linking libary out there you need to place them in the right place,
 you should type
@@ -9,219 +9,106 @@ you should type
 only works in linux
 there you can just run the two program
 
-### using besier
-click on the screen when you make it four it will form a besier curve
-### using meshlab
-key | usage
----|---
-F1 | changing file to draw the next model
-F2 | changing different form the present the model
-mouse click| to rotate the model
-mouse rolling| to get far or close
-up | move the model up
-down | move down
-left | move left
-right |right 
+### using this program
+its just a simple static program to make us learn how to set up all these lights and its easy to adding some operation to move it around,but to show the priciple of light source set up,just make a static program.
 
 ### compile command
 ```
-g++ -o hw4meshlab hw4meshlab.cpp -lGL -lGLU -lglut -lOpenMeshCore
+ g++ -o teapot teapot.cpp -lGL -lGLU -lglut
 ```
 ## besier curve
 the result was below
-![besizer curve](./besizer.png)
+![teapot](./teapot.png)
 
-to accomplish this assigment there are a few interest point to do about the besier curve.
+to accomplish this assigment there are a few interest point to do about the program
 
 ```
-void drawBezier(vector<Point> vec_point)
-{
-    glColor3f(1.0,0.0,0.0);
-    Point p1 = vec_point[0];
-    Point p2 = vec_point[1];
-    Point p3 = vec_point[2];
-    Point p4 = vec_point[3];
-    Point temp_p(0,0);
-    for(double t=0;t<=1.0;t+=0.01)
-    {
-        Point p(0,0);
-        double a1 = pow((1 - t), 3);
-        double a2 = pow((1 - t), 2) * 3 * t;
-        double a3 = 3 * t*t*(1 - t);
-        double a4 = t*t*t;
-        p.x = a1*p1.x + a2*p2.x + a3*p3.x + a4*p4.x;
-        p.y = a1*p1.y + a2*p2.y + a3*p3.y + a4*p4.y;
-        if(t==0)
-        {
-            temp_p.x = p.x;
-            temp_p.y = p.y;
-        }
-        else
-        {
-            drawLine(temp_p,p);
-            temp_p.x = p.x;
-            temp_p.y = p.y;
-        }
-    }
+void display(void)  
+{  
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
+    glEnable(GL_DEPTH_TEST);
+    glPushMatrix();  
+
+    glColor3f(1.0f, 1.0f, 1.0f);  
+    glEnable(GL_NORMALIZE); //according to the doc this will make less mistake in some cases
+    glutSolidTeapot(teapot_size); 
     
-}
+    glPopMatrix();  
+
+    glutSwapBuffers();  
+
+}  
+  
 ```
 
-the code was above, what i want to say is that there is no perfect api for you to draw a besier curve,one of the apporach is to choose some point with same distance then we connect each of them with the disadjected one to them to make it feels like we actually draw a fluent curve.
+as you can see the drawing phrase of the teapot is rather simple,just one api call 
 
-of course the same distance means the x index is of same distance.and the y depend all on the besier formular.
+the really matter code statement was below
+```
+void SetupLights()  
+{  
 
-as for the other part of the program
-```
-void mouse(int button, int state, int x, int y) 
-{
-    //cout<<1<<endl;
-    if(state == GLUT_DOWN)
-    {
-        Point p(x,480-y);
-        glColor3f(1.0,1.0,1.0);
-        glBegin(GL_POINTS);
-        glVertex2f(p.x, p.y);
-        glEnd();
-        glFlush();
-        vec_point.push_back(p);
-        if(vec_point.size()==4)
-        {
-            vec_ber.push_back(vec_point);
-            vec_point.clear();
-        }  
-    }
-    glutPostRedisplay();
-}
-```
-the mouse move is that each click will add a point to the array and once there is four elements in the same array,since the array can form a besier curve already,in the next display move we will show the besier curve by calling the previous draw besier curve.
+    glShadeModel (GL_SMOOTH);
+    GLfloat ambientLight[]  = {0.2f,  0.2f,  0.2f,  1.0f};//enviormental light 
+    GLfloat diffuseLight[]  = {0.9f,  0.9f,  0.9f,  1.0f};//slow reflection 
+    GLfloat specularLight[] = {1.0f,  1.0f,  1.0f,  1.0f};//mirror reflection light 
+    GLfloat lightPos[]      = {1.0f, -2.0f, 2.0f, 1.0f};//light source position，spot light
+    //GLfloat lightPos2[]      = {1.0f, -2.0f, 2.0f, 0.0f};  
+    //GLfloat spot_direction[] = {100.0f, -50.0f, 50.0f};
+    GLfloat shinless[] = {50.0};
+    glEnable(GL_LIGHTING);
+    glLightfv(GL_LIGHT1, GL_POSITION, lightPos);
+    //glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction);
+    //glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, deg);
+    //glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);     //set up the ebviormental light  
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);     //set up the slow reflection light  
+    glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);   //set up the mirror reflection light    
+    glEnable(GL_LIGHT1);
 
-```
-void display()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    for(auto p:vec_point)
-    {
-        glColor3f(1.0,1.0,1.0);
-        glBegin(GL_POINTS);
-        glVertex2f(p.x, p.y);
-        glEnd();
-        glFlush();   
-    }
-    for(auto line:vec_ber)
-    {
-        for(auto p:line)
-        {
-            glColor3f(1.0,1.0,1.0);
-            glBegin(GL_POINTS);
-            glVertex2f(p.x, p.y);
-            glEnd();
-            glFlush();
-        }
-        for(int i = 0;i < line.size()-1;i++)
-        {
-            glColor3f(1.0,1.0,1.0);
-            drawLine(line[i],line[i+1]);
-        }
-        for(int i=0;i<vec_point.size();i++)
-        {
-            glColor3f(1.0,1.0,1.0);
-            glBegin(GL_POINTS);
-            glVertex2f(vec_point[i].x, vec_point[i].y);
-            glEnd();
-            glFlush();
-        }
-        drawBezier(line);
-    }
-}
+
+    GLfloat ambientLight2[]  = {0.0f,  0.0f,  0.0f,  1.0f};//enviormental light 
+    GLfloat diffuseLight2[]  = {0.5f,  0.5f,  0.5f,  1.0f};//slow reflection 
+    GLfloat specularLight2[] = {0.5f,  0.5f,  0.5f,  1.0f};//mirror reflection light 
+    GLfloat lightPos2[]      = {1.0f, -2.0f, 2.0f, 0.0f};//light source position，point light source
+ 
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos2);        //set the light source position  
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight2);     //set up the ebviormental light  
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight2);     //set up the slow reflection light  
+    //glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight2);   //set up the mirror reflection light    
+
+    glEnable(GL_LIGHT0);
+    
+    glEnable(GL_COLOR_MATERIAL);                        //start the setting of material  
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);  //set up which face 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularLight); //reaction to the material  
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shinless);
+    glMateriali(GL_FRONT, GL_SHININESS, 100);           //reflection rate   
+    
+/*
+    GLfloat light_position[] = {50.0f, 0.0f, 50.0f, 1.0f };  
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);  
+    glEnable(GL_LIGHTING);  
+    glEnable(GL_LIGHT0);  
+    glDepthFunc(GL_LESS);  
+    glEnable(GL_DEPTH_TEST);    
+*/
 ```
 
-## meshlab program
+above is the really matter code which is how to set up the right source light
 
-![1](./1.png)
-![2](./2.png)
-![3](./3.png)
-above all,the idea of this program is very simple,that is we read the vertex and plane,then just simple use opengl api to represent them all.
+1. its really hard to just according the photo of another photo then just make a program exactly like that,so you can see i actually do a lot of changes to my code to find out how to be more like the given photo.
 
-but the diffcuty part is that there are actually three forms of 3d model saving data.each of them has different representation method of data.so if you just simply write the program to reginaize them from three times is kind messy and probably hard to bug free.so i search on the net.
+2. and my achievement is that to accomplish work like that it need two light source.
 
-there do have more elegent solution for thsi method,there's a libary called openmesh has it own i/o api can read different types of file then return the standard format of data.
-
-so let's stop rewrite the wheels and lets get our hand dirty.
+3. one light source is the spot light which is 
 ```
-    OpenMesh::IO::Options opt;
-    OpenMesh::IO::read_mesh(mesh, file, opt);
-```
+GLfloat lightPos[]      = {1.0f, -2.0f, 2.0f, 1.0f};//light source position，spot light
 
-after forming a 3d model,every else will just become as easy as hell,all you need to do is to dealing with the control module
 ```
-void keyboard(int key, int x, int y) {
-    switch (key) 
-    {
-    case GLUT_KEY_F1:
-        currentfile++;
-        if(currentfile>file_size-1)
-            currentfile = 0;
-        readfile(file_arr[currentfile]);
-        scale = 1.0f;
-        if(currentfile == 2)
-            scale = 0.01f;
-        init();
-        break;
-    case GLUT_KEY_F2:
-        if (showFace == true) 
-        {
-            showFace = false;
-            showWire = true;
-            cout<<"wire"<<endl;
-        }
-        else if (showWire == true)
-        {
-            showWire = false;
-            showFlatlines = true;
-            cout << "Flatlines" << endl;
-        }
-        else if (showFlatlines == true) 
-        {
-            showFlatlines = false;
-            showFace = true;
-            cout << "Flat" << endl;
-        }
-        break;
-    case GLUT_KEY_UP://move using up and down and left and right
-        y_position += 0.1;
-        break;
-    case GLUT_KEY_DOWN:
-        y_position -= 0.1;
-        break;
-    case GLUT_KEY_LEFT:
-        x_position -= 0.1;
-        break;
-    case GLUT_KEY_RIGHT:
-        x_position += 0.1;
-        break; 
-    default:
-        break;
-    }
-    glutPostRedisplay();
-}
-```
+to form the bright reflection in the center of the teapot
 
-as for the display part of code.
+4. the second light source is a normal point light source which to form the reality aspect of the overall program which to be specific is the slight shadow all over the teapot
 ```
-    if (face_flag)
-    {
-        drawFace();
-    }
-    else if (flatline_flag) 
-    {
-        drawLine();
-        drawFace();
-    }
-    else if (line_flag)
-    {
-        drawLine();
-    }
-    glutSwapBuffers(); //swap the buffer bit
+    GLfloat lightPos2[]      = {1.0f, -2.0f, 2.0f, 0.0f}
 ```
 
